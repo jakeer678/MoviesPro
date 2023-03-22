@@ -1,49 +1,51 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
+
 import "./MovieForm.css";
 
-const MovieForm = (props) => {
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [date, setDate] = useState("");
+function AddMovie(props) {
+  const titleRef = useRef("");
+  const openingTextRef = useRef("");
+  const releaseDateRef = useRef("");
 
-  const addmovies = (e) => {
-    e.preventDefault();
-    const newObj = {
-      title: title,
-      text: text,
-      date: date,
+  function submitHandler(event) {
+    event.preventDefault();
+
+    // could add validation here...
+
+    const movie = {
+      title: titleRef.current.value,
+      openingText: openingTextRef.current.value,
+      releaseDate: releaseDateRef.current.value,
     };
 
-    console.log(newObj, "uuuuuu");
-  };
+    props.onAddMovie(movie);
+    props.deletemovies(movie)
+  }
+
+
 
   return (
-    <div>
-      <form onSubmit={addmovies}>
-        <label>Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-        />
-        <br></br>
-        <label>opening text</label>
-        <input
-          type="text"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-        />
-        <br></br>
-        <label>Release date</label>
-        <input
-          type="text"
-          value={date}
-          onChange={(event) => setDate(event.target.value)}
-        />
-        <button type="submit"></button>
+    <>
+      <form onSubmit={submitHandler}>
+        <div className="control">
+          <label htmlFor="title">Title</label>
+          <input type="text" id="title" ref={titleRef} />
+        </div>
+        <div className="control">
+          <label htmlFor="opening-text">Opening Text</label>
+          <textarea rows="5" id="opening-text" ref={openingTextRef}></textarea>
+        </div>
+        <div className="control">
+          <label htmlFor="date">Release Date</label>
+          <input type="text" id="date" ref={releaseDateRef} />
+        </div>
+        <button>Add Movie</button>
       </form>
-    </div>
+      <div className="control">
+        <button type="submit">delete movie</button>
+      </div>
+    </>
   );
-};
+}
 
-export default MovieForm;
+export default AddMovie;
