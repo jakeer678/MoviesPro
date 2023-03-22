@@ -8,6 +8,8 @@ function App() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [postSuccess, setPostSuccess] = useState(false);
+  const [deletePost, setDeletePost] = useState(false);
 
   // const getMovies = () => {
   //   fetch('https://swapi.dev/api/films/').then((response)=>{
@@ -67,31 +69,30 @@ function App() {
       }
     );
     const data = response.json();
-    console.log(data);
+    setPostSuccess(true);
   }
 
-  async function deletemovies(id) {
-    const response = await fetch(
-      "https://movies-46dd9-default-rtdb.firebaseio.com/movies.json",
-      {
-        method: "DELETE",
-        body: JSON.stringify(id),
-        headers: {
-          "contet-Type": "application/json",
-        },
-      }
-    );
-    const data = response.json();
-    function deletemovies(Id) {
-      const filterItem = data.filter((item)=> item.id!==Id )
-      setMovies(filterItem)
+  // async function deletemovies(id) {
+  //   const response = await fetch(
+  //     "https://movies-46dd9-default-rtdb.firebaseio.com/movies.json",
+  //     {
+  //       method: "DELETE",
+  //       body: JSON.stringify(id),
+  //       headers: {
+  //         "contet-Type": "application/json",
+  //       },
+  //     }
+  //   );
+  //   const data = response.json();
+  //   function deletemovies(Id) {
+  //     const filterItem = data.filter((item)=> item.id!==Id )
+  //     setMovies(filterItem)
 
-    console.log(data);
-  }
+  //   console.log(data);
+  // }
 
- 
-   }
-   
+  //  }
+
   // let content = <p>found no movies</p>;
 
   // if (movies.length > 0) {
@@ -106,16 +107,32 @@ function App() {
 
   useEffect(() => {
     getMovies();
-  }, [getMovies]);
+  }, []);
+
+  useEffect(() => {
+    if (postSuccess) {
+      getMovies();
+      setPostSuccess(false);
+    }
+  }, [postSuccess]);
+
+  useEffect(() => {
+    if (deletePost) {
+      getMovies();
+      setDeletePost(false);
+    }
+  }, [deletePost]);
 
   return (
     <React.Fragment>
       <section>
-        <MovieForm onAddMovie={addMovieHandler} deletemovies={deletemovies} />
+        <MovieForm onAddMovie={addMovieHandler} />
         <button onClick={getMovies}>Fetch Movies</button>
       </section>
       <section>
-        {!loading && movies.length > 0 && <MoviesList movies={movies} />}
+        {!loading && movies.length > 0 && (
+          <MoviesList movies={movies} setDeletePost={setDeletePost} />
+        )}
         {!loading && movies.length === 0 && !error && <p>found No movies</p>}
         {loading && <p>....Loading</p>}
 
